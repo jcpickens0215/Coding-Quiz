@@ -12,6 +12,7 @@ var btnSelectionD = document.querySelector("#selectionD");
 // Game variables
 var gameState = "GS_WELCOME"; // Useful for checking if we're on the welcome screen, game screen, or highscore screen
 var timeLeft = 60; // Total game time
+var questionIndex = 0; // Which question are we on?
 var numQuestions = 0; // Total number of questions
 var numCorrect = 0; // Number of questions player answered correctly
 
@@ -22,20 +23,42 @@ var currentQuestion = {
     options: ["", "", "", ""]
 };
 
-/* INIT
+/* INIT */
 // STEP 0
 // Function: Init
+function init() {
+    gameState = "GS_WELCOME";
     // Loads questions and highscores
         // Get JSON question file
         // Load highscores from system local storage
-*/
 
-/* RENDER
+    // Clear Screen
+    clearScreen();
+}
+
+/* RENDER */
 // STEP 0
-// Function: Render Homescreen
+// Function: Render Welcomescreen
+function renderWelcomeScreen() {
     // fldTextField ==> print welcome/instructions
+    fldTextField.children[0].textContent = "Welcome!";
+    fldTextField.children[1].textContent = "Instructions: ";
     // fldGameText ==> display startButton
-        // setAttr text-align Center
+    btnStartButton.setAttribute("style", "visibility: visible; text-align:center;");
+}
+
+// RENDER
+// Function: Clear screen
+function clearScreen() {
+    fldTextField.children[0].textContent = "";
+    fldTextField.children[1].textContent = "";
+
+    btnStartButton.setAttribute("style", "visibility: hidden;");
+    btnSelectionA.textContent = "";
+    btnSelectionB.textContent = "";
+    btnSelectionC.textContent = "";
+    btnSelectionD.textContent = "";
+}
 
 // RENDER
 // Step 2b
@@ -49,7 +72,7 @@ var currentQuestion = {
     // Log results
     // Print results to screen
     // Call Render HighScore
-*/
+
 
 /* LOAD
 // STEP 2a
@@ -65,10 +88,11 @@ var currentQuestion = {
             // if isTrueFalse, ignore C and D keystrokes
 */
 
-/* LOGIC
+/* LOGIC */
 // STEP 2
 // Function: Main Game loop
 function gameLoop() {
+    gameState = "GS_GAMELOOP";
     // Choose first Question
     // >Call "loadQuestion"
 
@@ -90,16 +114,20 @@ function gameLoop() {
     // STEP 3
     // Timer runs out
         // Render Results
-} */
+} 
 
-/* EVENTS
+/* FUNCTION CALLS
+init(); */
+renderWelcomeScreen();
+
+/* EVENTS */
 // STEP 1
 // EventListener Start Button
+btnStartButton.addEventListener("click", function() {
+    gameLoop();
+});
 
 // EventListener Answer Buttons
-*/
-
-
 
 // Procedure
     // 0 Welcome screen
