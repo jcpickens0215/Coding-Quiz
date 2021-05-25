@@ -13,37 +13,36 @@ var btnSelectionD = document.querySelector("#selectionD");
 var gameState = "GS_WELCOME"; // Useful for checking if we're on the welcome screen, game screen, or highscore screen
 var timeLeft = 60; // Total game time
 var numCorrect = 0; // Number of questions player answered correctly
-var userSubmittedAnswer = false;
 
 // I had to hardcode these questions because I couldn't figure out how to load a JSON
 var listOfQuestions = [
     {
         "answer": "A",
-        "isTrueFalse": "false",
+        "isTrueFalse": false,
         "question": "The answer is A",
         "options": ["A", "B", "C", "D"]
     },
     {
         "answer": "B",
-        "isTrueFalse": "false",
-        "question": "The answer is A",
+        "isTrueFalse": false,
+        "question": "The answer is B",
         "options": ["A", "B", "C", "D"]
     },
     {
         "answer": "C",
-        "isTrueFalse": "false",
-        "question": "The answer is A",
+        "isTrueFalse": false,
+        "question": "The answer is C",
         "options": ["A", "B", "C", "D"]
     },
     {
         "answer": "D",
-        "isTrueFalse": "false",
-        "question": "The answer is A",
+        "isTrueFalse": false,
+        "question": "The answer is D",
         "options": ["A", "B", "C", "D"]
     },
     {
         "answer": "B",
-        "isTrueFalse": "true",
+        "isTrueFalse": true,
         "question": "True/False test, the answer is False",
         "options": ["True", "False", "", ""]
     }
@@ -60,7 +59,8 @@ var userSelectedAnswer = "";
 function init() {
     gameState = "GS_WELCOME";
     // Loads questions and highscores
-    console.log(currentQuestion);
+    // console.log(listOfQuestions);
+    // console.log(currentQuestion);
 
     // Load highscores from system local storage
 
@@ -95,7 +95,7 @@ function clearScreen() {
 // RENDER
 // Step 2b
 // Function: Render question and answer
-function renderQuestionAndAnswer() {
+function renderQuestionAndAnswer(isTrueFalse) {
     // Print question to fldTextField
     fldTextField.children[0].textContent = "Question " + (questionIndex + 1);
     fldTextField.children[1].textContent = currentQuestion["question"];
@@ -106,8 +106,15 @@ function renderQuestionAndAnswer() {
     btnStartButton.setAttribute("style", "visibility: hidden;");
     btnSelectionA.textContent = optionsArray[0];
     btnSelectionB.textContent = optionsArray[1];
-    btnSelectionC.textContent = optionsArray[2];
-    btnSelectionD.textContent = optionsArray[3];
+    if (isTrueFalse === false) {
+        btnSelectionC.textContent = optionsArray[2];
+        btnSelectionD.textContent = optionsArray[3];
+        btnSelectionC.setAttribute("style", "visibility:visible;");
+        btnSelectionD.setAttribute("style", "visibility:visible;");
+    } else {
+        btnSelectionC.setAttribute("style", "visibility:hidden;");
+        btnSelectionD.setAttribute("style", "visibility:hidden;");
+    }
 }
 
 // RENDER
@@ -117,12 +124,6 @@ function renderQuestionAndAnswer() {
     // Print results to screen
     // Call Render HighScore
 
-
-/* LOAD
-// STEP 2a
-// Function: Load new question
-*/
-
 /* LISTEN */
 // STEP 2c
 // Function: Listen for user input ( PARAM element, isTrueFalse ) 
@@ -130,7 +131,7 @@ function parseUserInput(element, isTrueFalse) {
     // string return type ==> returns "A", "B", "C", or "D"
 
     // Check which button was clicked
-    if (isTrueFalse == true) {
+    if (isTrueFalse === true) {
         if (element === btnSelectionA) {
             return "A";
         } else if (element === btnSelectionB) {
@@ -163,29 +164,35 @@ function gameLoop() {
         timeLeft--;
 
         if (questionIndex < numQuestions) {
-            
-
             // Sanity check
             // console.log(questionIndex);
             // console.log(numQuestions);
 
-            userSelectedAnswer = ""; // !! May be buggy
-            renderQuestionAndAnswer();
+            renderQuestionAndAnswer(currentQuestion["isTrueFalse"]);
+
             if (userSelectedAnswer != "") { // If the user has answered
-                console.log(userSelectedAnswer);
-                console.log(currentQuestion["answer"]);
 
                 if (userSelectedAnswer == currentQuestion["answer"]) {
                     // Correct!
-
+                    numCorrect++;
+                    clearScreen();
+                    questionIndex++;
+                    currentQuestion = listOfQuestions[questionIndex]
+                    userSelectedAnswer = "";
+                    if (questionIndex < numQuestions) {
+                        renderQuestionAndAnswer(currentQuestion["isTrueFalse"]);
+                    } else {
+                        // Render results
+                    }
                 } else {
                     // Incorrect!
-
+                    timeLeft = timeLeft - 10;
+                    userSelectedAnswer = "";
                 }
             }
         }
 
-        if(timeLeft === 0) {
+        if(timeLeft <= 0) {
             clearInterval(countDownInterval);
         }
     }, 1000);
@@ -212,7 +219,6 @@ fldPlayField.addEventListener("click", function (event) {
     var element = event.target;
     if (element.matches("button") === true) {
         userSelectedAnswer = parseUserInput(element, currentQuestion["isTrueFalse"]);
-        console.log(userSelectedAnswer);
     }
 });
 
