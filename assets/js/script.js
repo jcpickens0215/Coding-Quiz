@@ -12,16 +12,45 @@ var btnSelectionD = document.querySelector("#selectionD");
 // Game variables
 var gameState = "GS_WELCOME"; // Useful for checking if we're on the welcome screen, game screen, or highscore screen
 var timeLeft = 60; // Total game time
-var questionIndex = 0; // Which question are we on?
-var numQuestions = 0; // Total number of questions
 var numCorrect = 0; // Number of questions player answered correctly
 
-// Object to store current question
-var currentQuestion = {
-    answer: "",
-    question: "",
-    options: ["", "", "", ""]
-};
+// I had to hardcode these questions because I couldn't figure out how to load a JSON
+var listOfQuestions = [
+    {
+        "answer": "A",
+        "isTrueFalse": "false",
+        "question": "The answer is A",
+        "options": ["A", "B", "C", "D"]
+    },
+    {
+        "answer": "B",
+        "isTrueFalse": "false",
+        "question": "The answer is A",
+        "options": ["A", "B", "C", "D"]
+    },
+    {
+        "answer": "C",
+        "isTrueFalse": "false",
+        "question": "The answer is A",
+        "options": ["A", "B", "C", "D"]
+    },
+    {
+        "answer": "D",
+        "isTrueFalse": "false",
+        "question": "The answer is A",
+        "options": ["A", "B", "C", "D"]
+    },
+    {
+        "answer": "B",
+        "isTrueFalse": "true",
+        "question": "True/False test, the answer is False",
+        "options": ["True", "False", "", ""]
+    }
+];
+
+var currentQuestion = listOfQuestions[0]; // Variable to store current question
+var numQuestions = listOfQuestions.length; // Total number of questions
+var questionIndex = 0; // Which question are we on?
 
 /* INIT */
 // STEP 0
@@ -29,8 +58,9 @@ var currentQuestion = {
 function init() {
     gameState = "GS_WELCOME";
     // Loads questions and highscores
-        // Get JSON question file
-        // Load highscores from system local storage
+    console.log(currentQuestion);
+
+    // Load highscores from system local storage
 
     // Clear Screen
     clearScreen();
@@ -63,8 +93,20 @@ function clearScreen() {
 // RENDER
 // Step 2b
 // Function: Render question and answer
+function renderQuestionAndAnswer() {
     // Print question to fldTextField
+    fldTextField.children[0].textContent = "Question " + (questionIndex + 1);
+    fldTextField.children[1].textContent = currentQuestion["question"];
+    var optionsArray = currentQuestion["options"];
+
     // Print selection options to fldPlayField
+    fldPlayField.children[1].setAttribute("style", "visibility: visible;");
+    btnStartButton.setAttribute("style", "visibility: hidden;");
+    btnSelectionA.textContent = optionsArray[0];
+    btnSelectionB.textContent = optionsArray[1];
+    btnSelectionC.textContent = optionsArray[2];
+    btnSelectionD.textContent = optionsArray[3];
+}
 
 // RENDER
 // STEP 5, 6
@@ -101,13 +143,14 @@ function gameLoop() {
     var countDownInterval = setInterval(function() {
         timeLeft--;
 
+        console.log(timeLeft);
         // 2a, 2b, 2c
         // >Call "loadQuestion"
-        // >Call "renderQuestion"
+        renderQuestionAndAnswer();
         // >Call "parseUserInput"
 
-        if(secondsLeft === 0) {
-            clearInterval(timerInterval);
+        if(timeLeft === 0) {
+            clearInterval(countDownInterval);
         }
     }, 1000);
 
@@ -116,8 +159,8 @@ function gameLoop() {
         // Render Results
 } 
 
-/* FUNCTION CALLS
-init(); */
+/* FUNCTION CALLS */
+init();
 renderWelcomeScreen();
 
 /* EVENTS */
@@ -128,6 +171,14 @@ btnStartButton.addEventListener("click", function() {
 });
 
 // EventListener Answer Buttons
+/*
+fldPlayField.addEventListener("click", function (event) {
+  var element = event.target;
+  if (element.matches("button") === true) {
+      listenToInput(element, currentQuestion["isTrueFalse"]);
+  }
+});
+*/
 
 // Procedure
     // 0 Welcome screen
