@@ -13,6 +13,7 @@ var btnSelectionD = document.querySelector("#selectionD");
 var gameState = "GS_WELCOME"; // Useful for checking if we're on the welcome screen, game screen, or highscore screen
 var timeLeft = 60; // Total game time
 var numCorrect = 0; // Number of questions player answered correctly
+var userSubmittedAnswer = false;
 
 // I had to hardcode these questions because I couldn't figure out how to load a JSON
 var listOfQuestions = [
@@ -51,6 +52,7 @@ var listOfQuestions = [
 var currentQuestion = listOfQuestions[0]; // Variable to store current question
 var numQuestions = listOfQuestions.length; // Total number of questions
 var questionIndex = 0; // Which question are we on?
+var userSelectedAnswer = "";
 
 /* INIT */
 // STEP 0
@@ -121,33 +123,67 @@ function renderQuestionAndAnswer() {
 // Function: Load new question
 */
 
-/* LISTEN
+/* LISTEN */
 // STEP 2c
-// Function: Listen for user input ( PARAM isTrueFalse )
+// Function: Listen for user input ( PARAM element, isTrueFalse ) 
+function parseUserInput(element, isTrueFalse) {
     // string return type ==> returns "A", "B", "C", or "D"
+
     // Check which button was clicked
-        // Possibly check for keystrokes
-            // if isTrueFalse, ignore C and D keystrokes
-*/
+    if (isTrueFalse == true) {
+        if (element === btnSelectionA) {
+            return "A";
+        } else if (element === btnSelectionB) {
+            return "B";
+        }
+    } else {
+        if (element === btnSelectionA) {
+            return "A";
+        } else if (element === btnSelectionB) {
+            return "B";
+        } else if (element === btnSelectionC) {
+            return "C";
+        } else if (element === btnSelectionD) {
+            return "D";
+        }
+    }
+
+    return "";
+}
 
 /* LOGIC */
 // STEP 2
 // Function: Main Game loop
 function gameLoop() {
     gameState = "GS_GAMELOOP";
-    // Choose first Question
-    // >Call "loadQuestion"
 
     // STEP2
     // >Timer
     var countDownInterval = setInterval(function() {
         timeLeft--;
 
-        console.log(timeLeft);
-        // 2a, 2b, 2c
-        // >Call "loadQuestion"
-        renderQuestionAndAnswer();
-        // >Call "parseUserInput"
+        if (questionIndex < numQuestions) {
+            
+
+            // Sanity check
+            // console.log(questionIndex);
+            // console.log(numQuestions);
+
+            userSelectedAnswer = ""; // !! May be buggy
+            renderQuestionAndAnswer();
+            if (userSelectedAnswer != "") { // If the user has answered
+                console.log(userSelectedAnswer);
+                console.log(currentQuestion["answer"]);
+
+                if (userSelectedAnswer == currentQuestion["answer"]) {
+                    // Correct!
+
+                } else {
+                    // Incorrect!
+
+                }
+            }
+        }
 
         if(timeLeft === 0) {
             clearInterval(countDownInterval);
@@ -171,25 +207,26 @@ btnStartButton.addEventListener("click", function() {
 });
 
 // EventListener Answer Buttons
-/*
+
 fldPlayField.addEventListener("click", function (event) {
-  var element = event.target;
-  if (element.matches("button") === true) {
-      listenToInput(element, currentQuestion["isTrueFalse"]);
-  }
+    var element = event.target;
+    if (element.matches("button") === true) {
+        userSelectedAnswer = parseUserInput(element, currentQuestion["isTrueFalse"]);
+        console.log(userSelectedAnswer);
+    }
 });
-*/
+
 
 // Procedure
     // 0 Welcome screen
         // 1 User clicks START
             // 2 Start timer
                 // 2 Choose first question
-                    // 2a Load question
                     // 2b Render question
                     // 2c Listen for user input
                         // 2c1 Input correct ==> Log correct, clear screen, next question
                         // 2c2 Input incorrect ==> Subtract time, clear screen, next question
+                    // Next question
                     // 2d Restart cycle until not more questions, or time out
             // 3 Time out ==> exit loop
             // 4 Clear screen
