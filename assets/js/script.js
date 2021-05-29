@@ -1,9 +1,12 @@
 // Fields for injecting content
-var fldTextField = document.querySelector("#textField");
-var fldPlayField = document.querySelector("#playField");
+var fldTimerField     = document.querySelector("#timerField");
+var fldTextField      = document.querySelector("#textField");
+var fldPlayField      = document.querySelector("#playField");
+var fldHighScoreField = document.querySelector("#highScoreField");
 
 // Button Elements
 var btnStartButton = document.querySelector("#startButton");
+var btnResetButton = document.querySelector("#resetScoreButton");
 var btnSelectionA  = document.querySelector("#selectionA");
 var btnSelectionB  = document.querySelector("#selectionB");
 var btnSelectionC  = document.querySelector("#selectionC");
@@ -14,31 +17,39 @@ var gameState = "GS_WELCOME"; // Useful for checking if we're on the welcome scr
 
 var timeLeft = 60; // Total game time
 var playerScore = 0; // Store the player's score
+var highScores = []; // Declare empty highscore list
 
 var currentQuestion; // Variable to store current question
 var numQuestions = listOfQuestions.length; // Total number of questions
 var questionIndex = 0; // Which question are we on?
 var userSelectedAnswer = ""; // Store the player's selected answer as a string
 
-/* INIT */
-// STEP 0
-// Function: Init
+// Initialize the game
 function init() {
     gameState = "GS_WELCOME";
     playerScore = 0;
     questionIndex = 0;
     currentQuestion = listOfQuestions[0];
 
-    // Load highscores from system local storage
+    // ** Load highscores from system local storage
+    // Capture any existing local high score data
+    var highScoresListJSON = JSON.parse(localStorage.getItem("highScoresList"));
+
+    // If there was data...
+    if (highScoresListJSON !== null) {
+        // Then iterate through all entries
+        for (var i = 0; i < highScoresListJSON.length; i++) {
+            // And add each highscore to the list
+            highScores.push(highScoresListJSON[i]);
+        }
+    }
 
     // Clear Screen
     clearScreen();
     renderWelcomeScreen();
 }
 
-/* RENDER */
-// STEP 0
-// Function: Render Welcomescreen
+// Render the welcome screen
 function renderWelcomeScreen() {
     // fldTextField ==> print welcome/instructions
     fldTextField.children[0].textContent = "Welcome!";
@@ -50,6 +61,9 @@ function renderWelcomeScreen() {
 
 // Clears the screen of all text
 function clearScreen() {
+    // Make sure the high score page is hidden
+    fldHighScoreField.setAttribute("style", "visibility: hidden;");
+
     // Clear fields
     fldTextField.children[0].textContent = "";
     fldTextField.children[1].textContent = "";
@@ -72,8 +86,6 @@ function renderQuestionAndAnswer(isTrueFalse) {
 
     // Fetch array of answer selections from key "options"
     var optionsArray = currentQuestion["options"];
-
-    ///// Print selection options to fldPlayField
 
     // Make sure the unordered list is visible
     fldPlayField.children[1].setAttribute("style", "visibility: visible;");
@@ -101,24 +113,46 @@ function renderQuestionAndAnswer(isTrueFalse) {
     }
 }
 
-// RENDER
-// STEP 5, 6
-// Function: Render Results
+// Render the High Score screen
+function renderHighScoreScreen() {
+    gameState = "GS_HIGHSCORE";
+
+    // Show the high score table
+    fldHighScoreField.setAttribute("style", "visibility: visible;");
+
+    // Hide text field and play field
+    fldTextField.setAttribute("style", "visibility: hidden;");
+    fldPlayField.setAttribute("style", "visibility: hidden;");
+
     // Log results
+    var playerName = prompt("Please enter your name."); // Ask player for their name
+    if ((playerName === null) || (playerName === "")) { // If the player didn't enter anything
+        playerName = "Player"; // Give the entry a default name
+        highScores.push([playerName, playerScore]); // Log high score
+    } else { // If the player entered a name
+        highScores.push([playerName, playerScore]); // Log high score
+    }
+
+    // Store highScores to local storage
+    localStorage.setItem("highScoresList", JSON.stringify(highScores));
+    console.log(JSON.stringify(highScores)); // ! DEBUGGING FILE HANDLING
+
     // Print results to screen
-    // Call Render HighScore
+    // add an li for each entry in highScores
+
+}
 
 // When an option button is clicked, check which was selected and return
 // string return type ==> returns "A", "B", "C", or "D"
 function parseUserInput(element, isTrueFalse) {
     // Check which button was clicked
-    if (isTrueFalse === true) {
+    if (isTrueFalse === true) { // If the current question is True/False
         if (element === btnSelectionA) {
             return "A";
         } else if (element === btnSelectionB) {
             return "B";
         }
-    } else {
+    } else { // If the current question is not True/False
         if (element === btnSelectionA) {
             return "A";
         } else if (element === btnSelectionB) {
@@ -130,33 +164,25 @@ function parseUserInput(element, isTrueFalse) {
         }
     }
 
-    return "";
+    return ""; // If input was invalid return nothing
 }
 
-/* LOGIC */
-// STEP 2
-// Function: Main Game loop
+// Main Game loop
 function gameLoop() {
     gameState = "GS_GAMELOOP";
 
-    // STEP2
-    // >Timer
+    // Set timer (game loop)
     var countDownInterval = setInterval(function() {
-        timeLeft--;
+        timeLeft--; // Decrement the timer
+        fldTimerField.textContent = timeLeft; // Print the time remaining to the screen
 
         // Check if we're done
         if (questionIndex < numQuestions) { // If we're not done
-
-            /* Sanity check
-            // console.log(questionIndex);
-            // console.log(numQuestions);*/
-
             // Render the next question, passing in if it is
             // a True/False question
             renderQuestionAndAnswer(currentQuestion["isTrueFalse"]);
 
             if (userSelectedAnswer != "") { // If the user has answered
-
                 if (userSelectedAnswer == currentQuestion["answer"]) { // Correct!
                     playerScore += 10; // Add 10 to score
                     clearScreen(); // Clear the Screen
@@ -179,7 +205,7 @@ function gameLoop() {
                     } else { // If we are done
                         clearScreen(); // Clear the screen
                         playerScore += timeLeft; // Add remaining time to the score!
-                        // Call renderResults()
+                        renderHighScoreScreen();
                         clearInterval(countDownInterval);
                     }
                 } else { // Incorrect!
@@ -191,51 +217,28 @@ function gameLoop() {
 
         if(timeLeft <= 0) { // If we are out of time!
             clearScreen(); // Clear the screen
-            // Call renderResults()
+            renderHighScoreScreen();
             clearInterval(countDownInterval); // Exit the timer
         }
     }, 1000);
 
-    // STEP 3
     // Timer runs out
-        // Render Results
+    if ((gameState === "GS_GAMELOOP") && (timeLeft < 1)) {
+        renderHighScoreScreen();
+    }
 } 
 
-/* FUNCTION CALLS */
 init();
 
-/* EVENTS */
-// STEP 1
-// EventListener Start Button
+// Wait for click on the start button
 btnStartButton.addEventListener("click", function() {
-    gameLoop();
+    gameLoop(); // Start the game
 });
 
-// EventListener Answer Buttons
-
+// Listen for player input
 fldPlayField.addEventListener("click", function (event) {
     var element = event.target;
     if (element.matches("button") === true) {
         userSelectedAnswer = parseUserInput(element, currentQuestion["isTrueFalse"]);
     }
 });
-
-
-// Procedure
-    // 0 Welcome screen
-        // 1 User clicks START
-            // 2 Start timer
-                // 2 Choose first question
-                    // 2b Render question
-                    // 2c Listen for user input
-                        // 2c1 Input correct ==> Log correct, clear screen, next question
-                        // 2c2 Input incorrect ==> Subtract time, clear screen, next question
-                    // Next question
-                    // 2d Restart cycle until not more questions, or time out
-            // 3 Time out ==> exit loop
-            // 4 Clear screen
-            // 5 Ask user for name
-                // save score to local storage
-            // 6 Render High score
-            // 7 Go back to Home screen
-    // Welcome screen
