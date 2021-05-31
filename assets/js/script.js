@@ -5,12 +5,13 @@ var fldPlayField      = document.querySelector("#playField");
 var fldHighScoreField = document.querySelector("#highScoreField");
 
 // Button Elements
-var btnStartButton = document.querySelector("#startButton");
-var btnResetButton = document.querySelector("#resetScoreButton");
-var btnSelectionA  = document.querySelector("#selectionA");
-var btnSelectionB  = document.querySelector("#selectionB");
-var btnSelectionC  = document.querySelector("#selectionC");
-var btnSelectionD  = document.querySelector("#selectionD");
+var btnStartButton       = document.querySelector("#startButton");
+var btnResetButton       = document.querySelector("#resetScoreButton");
+var btnRestartGameButton = document.querySelector("#restartGameButton");
+var btnSelectionA        = document.querySelector("#selectionA");
+var btnSelectionB        = document.querySelector("#selectionB");
+var btnSelectionC        = document.querySelector("#selectionC");
+var btnSelectionD        = document.querySelector("#selectionD");
 
 // Game variables
 var gameState = "GS_WELCOME"; // Useful for checking if we're on the welcome screen, game screen, or highscore screen
@@ -51,6 +52,9 @@ function init() {
 
 // Render the welcome screen
 function renderWelcomeScreen() {
+    // Make sure the text field is visible
+    fldTextField.setAttribute("style", "visibility: visible;");
+
     // fldTextField ==> print welcome/instructions
     fldTextField.children[0].textContent = "Welcome!";
     fldTextField.children[1].textContent = "Instructions: ";
@@ -123,15 +127,24 @@ function renderHighScoreScreen() {
     // Hide text field and play field
     fldTextField.setAttribute("style", "visibility: hidden;");
     fldPlayField.setAttribute("style", "visibility: hidden;");
+    fldPlayField.children[1].setAttribute("style", "visibility: hidden;");
+
+    // Hide selection buttons
+    btnSelectionA.setAttribute("style", "visibility: hidden;");
+    btnSelectionB.setAttribute("style", "visibility: hidden;");
+    btnSelectionC.setAttribute("style", "visibility: hidden;");
+    btnSelectionD.setAttribute("style", "visibility: hidden;");
 
     // Log results
     var playerName = prompt("Please enter your name."); // Ask player for their name
     if ((playerName === null) || (playerName === "")) { // If the player didn't enter anything
         playerName = "Player"; // Give the entry a default name
-        highScores.push([playerName, playerScore]); // Log high score
-    } else { // If the player entered a name
-        highScores.push([playerName, playerScore]); // Log high score
     }
+
+    highScores.push([playerName, playerScore]); // Log high score
+
+    // Sort highscores
+    highScores.sort((a,b) =>  b[1] - a[1]);
 
     // Store highScores to local storage
     localStorage.setItem("highScoresList", JSON.stringify(highScores));
@@ -139,7 +152,11 @@ function renderHighScoreScreen() {
 
     // Print results to screen
     // add an li for each entry in highScores
-
+    for (var i = 0; i < highScores.length; i++) {
+        var scoreEntry = document.createElement("li");
+        scoreEntry.innerText = highScores[i][1] + "         " + highScores[i][0];
+        fldHighScoreField.children[1].appendChild(scoreEntry);
+    }
 }
 
 // When an option button is clicked, check which was selected and return
@@ -241,4 +258,15 @@ fldPlayField.addEventListener("click", function (event) {
     if (element.matches("button") === true) {
         userSelectedAnswer = parseUserInput(element, currentQuestion["isTrueFalse"]);
     }
+});
+
+// When the user clicks the "Reset Scores" button
+btnResetButton.addEventListener("click", function() {
+    localStorage.removeItem("highScoresList");
+    fldHighScoreField.children[1].innerHTML = '';
+});
+
+// When the user clicks the "Play Again" button
+btnRestartGameButton.addEventListener("click", function() {
+    window.location.reload();
 });
