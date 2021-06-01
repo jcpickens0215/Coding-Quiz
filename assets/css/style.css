@@ -9,6 +9,7 @@
 
 h1 {
     font-size: 200%;
+    line-height: 1.5;
 }
 
 h2 {
@@ -50,7 +51,7 @@ main {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 10px 20px;
 }
 
 header h1, header span {
@@ -65,6 +66,7 @@ header h1, header span {
 
 #textField p {
     line-height: 1.25;
+    margin: 5px 5%;
 }
 
 #playField {
@@ -101,6 +103,14 @@ header h1, header span {
 }
 
 @media screen and (max-width: 680px) {
+    button {
+        padding: 15px;
+    }
+    
+    main {
+        transform: translate(-50%, -30%);
+    }
+
     #header {
         flex-direction: column;
         justify-content: center;
