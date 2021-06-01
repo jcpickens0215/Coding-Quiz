@@ -24,6 +24,7 @@ var currentQuestion; // Variable to store current question
 var numQuestions = listOfQuestions.length; // Total number of questions
 var questionIndex = 0; // Which question are we on?
 var userSelectedAnswer = ""; // Store the player's selected answer as a string
+var userClickedButton = btnSelectionA; // Will contains the element clicked by the player, for applying style
 
 // Initialize the game
 function init() {
@@ -57,7 +58,7 @@ function renderWelcomeScreen() {
 
     // fldTextField ==> print welcome/instructions
     fldTextField.children[0].textContent = "Welcome!";
-    fldTextField.children[1].textContent = "Instructions: ";
+    fldTextField.children[1].textContent = "This is a multiple choice quiz about Javascript. You have 60 seconds to complete the quiz. For every question answered correctly, you get 10 points. For every question answered incorrectly, 10 seconds will be deducted from your time. If you have time left over after finishing the quiz, the amount of seconds left will be added to your score. Click 'Start!' to begin.";
 
     // fldGameText ==> display startButton
     btnStartButton.setAttribute("style", "display: block; text-align:center;");
@@ -96,6 +97,12 @@ function renderQuestionAndAnswer(isTrueFalse) {
 
     // Hide the start button
     btnStartButton.setAttribute("style", "display: none;");
+
+    // Reset the button colors
+    btnSelectionA.setAttribute("style", "background-color: #344cb8;");
+    btnSelectionB.setAttribute("style", "background-color: #344cb8;");
+    btnSelectionC.setAttribute("style", "background-color: #344cb8;");
+    btnSelectionD.setAttribute("style", "background-color: #344cb8;");
 
     // Display the first 2 answer selections options
     btnSelectionA.textContent = optionsArray[0];
@@ -167,18 +174,24 @@ function parseUserInput(element, isTrueFalse) {
     // Check which button was clicked
     if (isTrueFalse === true) { // If the current question is True/False
         if (element === btnSelectionA) {
+            userClickedButton = btnSelectionA;
             return "A";
         } else if (element === btnSelectionB) {
+            userClickedButton = btnSelectionB;
             return "B";
         }
     } else { // If the current question is not True/False
         if (element === btnSelectionA) {
+            userClickedButton = btnSelectionA;
             return "A";
         } else if (element === btnSelectionB) {
+            userClickedButton = btnSelectionB;
             return "B";
         } else if (element === btnSelectionC) {
+            userClickedButton = btnSelectionC;
             return "C";
         } else if (element === btnSelectionD) {
+            userClickedButton = btnSelectionD;
             return "D";
         }
     }
@@ -228,6 +241,7 @@ function gameLoop() {
                         clearInterval(countDownInterval);
                     }
                 } else { // Incorrect!
+                    userClickedButton.setAttribute("style", "background-color: #C94942; margin-top: 0; margin-bottom: 0;"); // Color button red
                     timeLeft = timeLeft - 10; // Subtract time
                     userSelectedAnswer = ""; // Reset userSelectedAnswer
                 }
