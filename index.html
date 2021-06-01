@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/reset.css" />
     <link rel="stylesheet" href="./assets/css/style.css" />
     <title>Coding Quiz</title>
   </head>
@@ -10,28 +11,31 @@
 
     <header id="header">
       <h1>Coding Quiz</h1>
-      <h1 id="timerField"></h1>
+      <h1>Timer: <span id="timerField">60</span></h1>
     </header>
-    <section id="textField">
-        <h2></h2>
-        <p></p>
-    </section>
-    <section id="playField">
-        <button id="startButton">Start!</button>
+
+    <main>
+      <section id="textField">
+          <h2></h2>
+          <p></p>
+      </section>
+      <section id="playField">
+          <button id="startButton">Start!</button>
+          <ul>
+              <li><button id="selectionA"></button></li>
+              <li><button id="selectionB"></button></li>
+              <li><button id="selectionC"></button></li>
+              <li><button id="selectionD"></button></li>
+          </ul>
+      </section>
+      <section id="highScoreField">
+        <h2>High Scores</h2>
         <ul>
-            <li><button id="selectionA"></button></li>
-            <li><button id="selectionB"></button></li>
-            <li><button id="selectionC"></button></li>
-            <li><button id="selectionD"></button></li>
         </ul>
-    </section>
-    <section id="highScoreField">
-      <h2>High Scores</h2>
-      <ul>
-      </ul>
-      <button id="resetScoreButton">Reset Scores</button>
-      <button id="restartGameButton">Play Again</button>
-    </section>
+        <button id="resetScoreButton">Reset Scores</button>
+        <button id="restartGameButton">Play Again</button>
+      </section>
+    </main>
 
     <script src="./assets/js/questions.js"></script>
     <script src="./assets/js/script.js"></script>

@@ -53,27 +53,27 @@ function init() {
 // Render the welcome screen
 function renderWelcomeScreen() {
     // Make sure the text field is visible
-    fldTextField.setAttribute("style", "visibility: visible;");
+    fldTextField.setAttribute("style", "display: block;");
 
     // fldTextField ==> print welcome/instructions
     fldTextField.children[0].textContent = "Welcome!";
     fldTextField.children[1].textContent = "Instructions: ";
 
     // fldGameText ==> display startButton
-    btnStartButton.setAttribute("style", "visibility: visible; text-align:center;");
+    btnStartButton.setAttribute("style", "display: block; text-align:center;");
 }
 
 // Clears the screen of all text
 function clearScreen() {
     // Make sure the high score page is hidden
-    fldHighScoreField.setAttribute("style", "visibility: hidden;");
+    fldHighScoreField.setAttribute("style", "display: none;");
 
     // Clear fields
     fldTextField.children[0].textContent = "";
     fldTextField.children[1].textContent = "";
 
     // Hide start button
-    btnStartButton.setAttribute("style", "visibility: hidden;");
+    btnStartButton.setAttribute("style", "display: none;");
 
     // Clear button text
     btnSelectionA.textContent = "";
@@ -92,14 +92,16 @@ function renderQuestionAndAnswer(isTrueFalse) {
     var optionsArray = currentQuestion["options"];
 
     // Make sure the unordered list is visible
-    fldPlayField.children[1].setAttribute("style", "visibility: visible;");
+    fldPlayField.children[1].setAttribute("style", "display: block;");
 
     // Hide the start button
-    btnStartButton.setAttribute("style", "visibility: hidden;");
+    btnStartButton.setAttribute("style", "display: none;");
 
     // Display the first 2 answer selections options
     btnSelectionA.textContent = optionsArray[0];
     btnSelectionB.textContent = optionsArray[1];
+    btnSelectionA.setAttribute("style", "display: block;");
+    btnSelectionB.setAttribute("style", "display: block;");
 
     // Check if the current question is a True/False
     if (isTrueFalse === false) { // If it's normal
@@ -108,12 +110,12 @@ function renderQuestionAndAnswer(isTrueFalse) {
         btnSelectionD.textContent = optionsArray[3];
 
         // And make sure they are visible
-        btnSelectionC.setAttribute("style", "visibility:visible;");
-        btnSelectionD.setAttribute("style", "visibility:visible;");
+        btnSelectionC.setAttribute("style", "display: block;");
+        btnSelectionD.setAttribute("style", "display: block;");
     } else { // If it is a True/False
         // Hide the other 2 buttons
-        btnSelectionC.setAttribute("style", "visibility:hidden;");
-        btnSelectionD.setAttribute("style", "visibility:hidden;");
+        btnSelectionC.setAttribute("style", "display: none;");
+        btnSelectionD.setAttribute("style", "display: none;");
     }
 }
 
@@ -122,20 +124,21 @@ function renderHighScoreScreen() {
     gameState = "GS_HIGHSCORE";
 
     // Show the high score table
-    fldHighScoreField.setAttribute("style", "visibility: visible;");
+    fldHighScoreField.setAttribute("style", "display: block;");
 
     // Hide text field and play field
-    fldTextField.setAttribute("style", "visibility: hidden;");
-    fldPlayField.setAttribute("style", "visibility: hidden;");
-    fldPlayField.children[1].setAttribute("style", "visibility: hidden;");
+    fldTextField.setAttribute("style", "display: none;");
+    fldPlayField.setAttribute("style", "display: none;");
+    fldPlayField.children[1].setAttribute("style", "display: none;");
 
     // Hide selection buttons
-    btnSelectionA.setAttribute("style", "visibility: hidden;");
-    btnSelectionB.setAttribute("style", "visibility: hidden;");
-    btnSelectionC.setAttribute("style", "visibility: hidden;");
-    btnSelectionD.setAttribute("style", "visibility: hidden;");
+    btnSelectionA.setAttribute("style", "display: none;");
+    btnSelectionB.setAttribute("style", "display: none;");
+    btnSelectionC.setAttribute("style", "display: none;");
+    btnSelectionD.setAttribute("style", "display: none;");
 
     // Log results
+    alert("Your score is " + playerScore + "!");
     var playerName = prompt("Please enter your name."); // Ask player for their name
     if ((playerName === null) || (playerName === "")) { // If the player didn't enter anything
         playerName = "Player"; // Give the entry a default name
@@ -148,7 +151,6 @@ function renderHighScoreScreen() {
 
     // Store highScores to local storage
     localStorage.setItem("highScoresList", JSON.stringify(highScores));
-    console.log(JSON.stringify(highScores)); // ! DEBUGGING FILE HANDLING
 
     // Print results to screen
     // add an li for each entry in highScores
